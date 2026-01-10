@@ -1,5 +1,14 @@
+import {DEFAULT_SETTINGS, VowelChartViewPluginSettings, VowelChartViewPluginSettingTab} from "../settings";
 
-const IPA_VOWELS = {
+type characterMap = {[string: string]: [number, number, number]};
+interface Position {
+	x: number;
+	y: number;
+	cardinal?: number;
+	label?: string;
+}
+
+const IPA_VOWELS: characterMap = {
 	'i': [1, 0.0, 0.0],
 	'y': [1, 0.0, 0.0],
 	'e': [2, 0.0, 1.0],
@@ -30,13 +39,13 @@ const IPA_VOWELS = {
 	'æ': [16, 0.0, 2.5],
 }
 
-const IPA_VOWELS_CENTRAL_A = {
+const IPA_VOWELS_CENTRAL_A: characterMap = {
 	...IPA_VOWELS,
 	'a': [17, 1.0, 3.0],
 	'æ': [4, 0.0, 3.0],
 }
 
-const IPA_VOWELS_TRIANGLE = {
+const IPA_VOWELS_TRIANGLE: characterMap = {
 	...IPA_VOWELS,
 	'a': [17, 1.0, 3.0],
 	'æ': [4, 0.0, 2.5],
@@ -45,7 +54,7 @@ const IPA_VOWELS_TRIANGLE = {
 	'ɒ': [5, 2.0, 2.5],
 }
 
-const IPA_VOWELS_FORMANT = {
+const IPA_VOWELS_FORMANT: characterMap = {
 	'i': [1 , 0.0 , 0.0],
 	'e': [2 , 0.0 , 1.0],
 	'ɛ': [3 , 0.0 , 2.0],
@@ -76,7 +85,7 @@ const IPA_VOWELS_FORMANT = {
 	'ɒ': [22, 2.0 , 2.5],
 }
 
-const HEIGHT_KEYWORDS = [
+const HEIGHT_KEYWORDS: [string, number][] = [
 	['near high', 0.5],
 	['high mid', 1],
 	['low mid', 2],
@@ -92,7 +101,7 @@ const HEIGHT_KEYWORDS = [
 	['mid', 1.5],
 ]
 
-const BACKNESS_KEYWORDS = [
+const BACKNESS_KEYWORDS: [string, number][] = [
 	['near front', 0.5],
 	['near back', 1.5],
 	['front', 0],
@@ -100,7 +109,7 @@ const BACKNESS_KEYWORDS = [
 	['back', 2],
 ]
 
-function getCardinalLayout(settings) {
+function getCardinalLayout(settings: VowelChartViewPluginSettings) {
 	if (settings.layout === 'triangle')
 		return IPA_VOWELS_TRIANGLE;
 
@@ -110,8 +119,8 @@ function getCardinalLayout(settings) {
 	return settings.centralLowVowel ? IPA_VOWELS_CENTRAL_A : IPA_VOWELS;
 }
 
-function keywords(position, settings) {
-	position = position.toLowerCase().replaceAll('-', ' ');
+function keywords(position: string, settings: VowelChartViewPluginSettings) {
+	position = position.toLowerCase().replace(/-/g, ' ');
 	let x = 1, y = 1.5;
 	for (const kw of HEIGHT_KEYWORDS) {
 		if (position.includes(kw[0])) {
@@ -129,10 +138,10 @@ function keywords(position, settings) {
 	return {x, y};
 }
 
-function getPosition(position, settings) {
+function getPosition(position: string, settings: VowelChartViewPluginSettings): Position | null {
 	if (position[0] == '(' && position.includes(',')) {
 		const axis = position.slice(1, -1).split(',');
-		return {x: parseFloat(axis[0].trim()), y: parseFloat(axis[1].trim())};
+		return {x: parseFloat(axis[0]?.trim()||'0'), y: parseFloat(axis[1]?.trim()||'0')};
 	}
 
 	if (position[0] == '[') {
@@ -140,7 +149,7 @@ function getPosition(position, settings) {
 
 		const chart = getCardinalLayout(settings);
 
-		const vowel = chart[decomposed[0]];
+		const vowel = chart[decomposed[0]??''];
 		if (!vowel) return null;
 
 		return {label: decomposed, cardinal: vowel[0], x: vowel[1], y: vowel[2]};
@@ -149,7 +158,7 @@ function getPosition(position, settings) {
 	return keywords(position, settings);
 }
 
-export function parse(source, settings, error) {
+export function parse(source: string, settings: VowelChartViewPluginSettings, error: (msg: string) => void) {
 	let end = 0;
 	const vowels = [];
 
@@ -161,13 +170,14 @@ export function parse(source, settings, error) {
 		const layoutMatch = line.match(/^layout (\w+)/m);
 		if (layoutMatch) {
 			end++;
-			settings.layout = layoutMatch[1].toLowerCase();
+			settings.layout = layoutMatch[1]?.toLowerCase()??'trapezoid';
 			continue;
 		}
 
 		const configMatch = line.match(/^config ([\w-]+) (.*)/);
-		if (configMatch) {
+		if (configMatch && configMatch[1]) {
 			end++;
+			//@ts-ignore Oh please
 			settings[configMatch[1]] = JSON.parse(configMatch[2]);
 			continue;
 		}
@@ -178,7 +188,7 @@ export function parse(source, settings, error) {
 		end++;
 
 		const dot = match[1]??'middle';
-		const position = getPosition(match[2], settings);
+		const position = getPosition(match[2]??'', settings);
 		let label = match[3];
 
 		if (!position) {
@@ -197,25 +207,26 @@ export function parse(source, settings, error) {
 		vowels.push({label, x: position.x, y: position.y, dot});
 	}
 
-	const positionMap = {};
+	const positionMap: {[n: number]: {x: number, y: number, text: string[]}} = {};
 
 	lines.slice(end).join(' ').split(/\s+/g)
 		.forEach(v => {
-			if (!v.trim()) return null;
+			if (!v.trim()) return;
 			const p = getPosition(`[${v}]`, settings);
-			if (!p) {
+			if (!p || !p.cardinal) {
 				error(`Error rendering vowel ‘${v}’`);
-				return null;
+				return;
 			}
-			if (p.cardinal in positionMap) {
-				positionMap[p.cardinal].text.push(v);
+			const cardinal = positionMap[p.cardinal];
+			if (cardinal) {
+				cardinal.text.push(v);
 			} else {
 				positionMap[p.cardinal] = {x: p.x, y: p.y, text:[v]};
 			}
 		});
 
 	for (const cardinal in positionMap) {
-		const v = positionMap[cardinal];
+		const v = positionMap[cardinal] as {x: number, y: number, text: string[]};
 		vowels.push({label: v.text.join(' '), x: v.x, y: v.y, dot: 'middle'});
 	}
 

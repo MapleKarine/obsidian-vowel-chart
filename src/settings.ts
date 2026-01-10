@@ -56,7 +56,7 @@ export class VowelChartViewPluginSettingTab extends PluginSettingTab {
 			.setName('Size')
 			.addText(text => text
 				.setValue(String(this.plugin.settings.size))
-				.setPlaceholder(DEFAULT_SETTINGS.size)
+				.setPlaceholder(String(DEFAULT_SETTINGS.size))
 				.onChange(async (value) => {
 					this.plugin.settings.size = Number(value) || DEFAULT_SETTINGS.size;
 					await this.plugin.saveSettings();

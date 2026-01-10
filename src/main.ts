@@ -6,17 +6,17 @@ import {parse} from 'parser/main';
 export default class VowelChartViewPlugin extends Plugin {
 	settings: VowelChartViewPluginSettings;
 
-	vowelChartProcessor(source, el, ctx) {
-		const container = renderContainer(el);
+	vowelChartProcessor(source: string, el: HTMLElement) {
+		const [container, renderVowels] = renderContainer(el);
 		const localSettings = Object.assign({}, this.settings);
 		const vowels = parse(source, localSettings, (msg) => container.createEl('p',{text:msg}));
-		container.renderVowels(vowels, localSettings);
+		renderVowels(vowels, localSettings);
 	}
 
 	async onload() {
 		await this.loadSettings();
 		this.addSettingTab(new VowelChartViewPluginSettingTab(this.app, this));
-		this.registerMarkdownCodeBlockProcessor('vowel-chart', (...args) => this.vowelChartProcessor(...args));
+		this.registerMarkdownCodeBlockProcessor('vowel-chart', (source, el, _) => this.vowelChartProcessor(source, el));
 	}
 
 	async loadSettings() {
