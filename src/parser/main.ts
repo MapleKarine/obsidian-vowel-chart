@@ -1,4 +1,4 @@
-import {DEFAULT_SETTINGS, VowelChartViewPluginSettings, VowelChartViewPluginSettingTab} from "../settings";
+import {VowelChartViewPluginSettings} from "../settings";
 
 type characterMap = {[string: string]: [number, number, number]};
 interface Position {

@@ -77,7 +77,7 @@ function drawSVG(svg: SVGSVGElement, layout: string, size: number) {
 	}
 }
 
-export function renderContainer(el: HTMLElement): [HTMLDivElement, (vowels: any, settings: VowelChartViewPluginSettings) => void] {
+export function renderContainer(el: HTMLElement): [HTMLDivElement, (vowels: Vowel[], settings: VowelChartViewPluginSettings) => void] {
 	const container = el.createEl('div', {cls: 'vowel-chart-container'});
 
 

@@ -1,4 +1,4 @@
-import {App, Editor, MarkdownView, Modal, Notice, Plugin} from 'obsidian';
+import {Plugin} from 'obsidian';
 import {DEFAULT_SETTINGS, VowelChartViewPluginSettings, VowelChartViewPluginSettingTab} from "./settings";
 import {renderContainer} from 'render/main'
 import {parse} from 'parser/main';
