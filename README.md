@@ -123,7 +123,7 @@ config size 25
 i e ɛ a ɔ o u
 ```
 
-![Image 10](image10.png)
+![Image 10](_images/image10.png)
 
 ## Manually installing the plugin
 
