@@ -1,0 +1,10 @@
+{
+	"id": "vowel-chart",
+	"name": "Vowel Chart",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Generate IPA style vowel diagrams.",
+	"author": "Maple Karine",
+	"authorUrl": "https://github.com/MapleKarine",
+	"isDesktopOnly": false
+}

@@ -1,0 +1,46 @@
+.vowel-chart-container {
+	position: relative;
+}
+
+.vowel-chart-svg {
+	fill: var(--text-normal);
+	stroke: var(--text-normal);
+}
+
+.vowel-chart-text-float-container {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+
+.vowel-chart-text-float.left {
+	transform: translate(-100%, -60%);
+}
+
+.vowel-chart-text-float.right {
+	transform: translate(0%, -60%);
+}
+
+.vowel-chart-text-float.middle {
+	transform: translate(-50%, -60%);
+}
+
+.vowel-chart-text-float {
+	position: absolute;
+	background: var(--background-primary);
+
+	padding: 0px 4px;
+	border-radius: 6px;
+	user-select: none;
+	text-wrap-mode: nowrap;
+	line-height: 1em;
+}
+
+.vowel-chart-text-dot {
+	position: absolute;
+	display: block;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background-color: var(--text-normal);
+}
