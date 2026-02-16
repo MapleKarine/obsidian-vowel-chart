@@ -1,4 +1,4 @@
-import {DEFAULT_SETTINGS, VowelChartViewPluginSettings, VowelChartViewPluginSettingTab} from "../settings";
+import {DEFAULT_SETTINGS, VowelChartViewPluginSettings} from "../settings";
 
 interface Vowel {
 	label: string, x: number, y: number, dot: string
@@ -25,14 +25,17 @@ function formantChartCoord(x: number, y: number): [number, number] {
 	return [x+(2*y/3), y];
 }
 
-const layoutFunction = {
+const layoutFunction: {[layout: string]: (x: number, y: number) => [number, number]} = {
 	'square': squareChartCoord,
 	'trapezoid': trapezoidChartCoord,
 	'triangle': triangleChartCoord,
 	'formant': formantChartCoord,
 }
 
-function drawSVG(svg: SVGSVGElement, layout: string, size: number) {
+function drawSVG(svg: SVGSVGElement, settings: VowelChartViewPluginSettings) {
+	const layout = settings.layout.toLowerCase();
+	const size = settings.size;
+
 	svg.setAttribute('xmlns', "http://www.w3.org/2000/svg");
 	svg.setAttribute('width', (size*4+64)+'px');
 	svg.setAttribute('height', (size*3+32)+'px');
@@ -78,7 +81,7 @@ function drawSVG(svg: SVGSVGElement, layout: string, size: number) {
 }
 
 export function renderContainer(el: HTMLElement): [HTMLDivElement, (vowels: Vowel[], settings: VowelChartViewPluginSettings) => void] {
-	const container = el.createEl('div', {cls: 'vowel-chart-container'});
+	const container = el.createEl('div', {cls: 'vowel-chart-body'});
 
 
 	const svgEl = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -90,7 +93,6 @@ export function renderContainer(el: HTMLElement): [HTMLDivElement, (vowels: Vowe
 		settings.size = Number(settings.size) || DEFAULT_SETTINGS.size;
 		settings.layout = settings.layout.toLowerCase();
 
-		//@ts-ignore 
 		const positionFunc = layoutFunction[settings.layout] ?? trapezoidChartCoord;
 
 		for (const vowel of vowels) {
@@ -101,12 +103,12 @@ export function renderContainer(el: HTMLElement): [HTMLDivElement, (vowels: Vowe
 				dotEl.style.left = `${(x*settings.size+32)-3}px`;
 				dotEl.style.top = `${(y*settings.size+16)-3}px`;
 			}
-			const text = textFloat.createEl('span', {text: vowel.label, cls: 'vowel-chart-text-float '+vowel.dot});
+			const text = textFloat.createEl('span', {text: vowel.label, cls: 'vowel-chart-text '+vowel.dot});
 			text.style.left = `${(x*settings.size+32)+(vowel.dot=='left'?-4:vowel.dot=='right'?4:0)}px`;
 			text.style.top = `${(y*settings.size+16)}px`;
 		}
 
-		drawSVG(svgEl, settings.layout.toLowerCase(), settings.size);
+		drawSVG(svgEl, settings);
 
 	};
 

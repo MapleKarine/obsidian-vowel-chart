@@ -5,12 +5,24 @@ export interface VowelChartViewPluginSettings {
 	centralLowVowel: boolean;
 	layout: string;
 	size: number;
+	style: VowelChartViewPluginStyleSettings;
+}
+
+export interface VowelChartViewPluginStyleSettings {
+	gridColor?: string;
+	backgroundColor?: string;
+	textColor?: string;
 }
 
 export const DEFAULT_SETTINGS: VowelChartViewPluginSettings = {
 	centralLowVowel: true,
 	layout: 'trapezoid',
 	size: 40,
+	style: {
+		backgroundColor: 'white',
+		gridColor: 'black',
+		textColor: 'black',
+	}
 }
 
 export class VowelChartViewPluginSettingTab extends PluginSettingTab {
