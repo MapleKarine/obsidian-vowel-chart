@@ -125,6 +125,18 @@ i e ɛ a ɔ o u
 
 ![Image 10](_images/image10.png)
 
+## Styling
+
+Styling can be done by CSS snippets, changing colors can be made changing the variables in the `.vowel-chart-body` class. By default they inherit Obsidian variables:
+
+```
+.vowel-chart-body {
+	--vowel-chart-background: var(--background-primary);
+	--vowel-chart-text: var(--text-normal);
+}
+```
+
 ## Manually installing the plugin
 
 - Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/vowel-chart/`.
+
