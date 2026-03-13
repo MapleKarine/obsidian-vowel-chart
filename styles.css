@@ -1,10 +1,13 @@
-.vowel-chart-container {
+.vowel-chart-body {
 	position: relative;
+	--vowel-chart-background: var(--background-primary);
+	--vowel-chart-text: var(--text-normal);
 }
 
 .vowel-chart-svg {
-	fill: var(--text-normal);
-	stroke: var(--text-normal);
+	fill: var(--vowel-chart-text);
+	stroke: var(--vowel-chart-text);
+	background-color: var(--vowel-chart-background);
 }
 
 .vowel-chart-text-float-container {
@@ -13,21 +16,22 @@
 	left: 0px;
 }
 
-.vowel-chart-text-float.left {
+.vowel-chart-text.left {
 	transform: translate(-100%, -60%);
 }
 
-.vowel-chart-text-float.right {
+.vowel-chart-text.right {
 	transform: translate(0%, -60%);
 }
 
-.vowel-chart-text-float.middle {
+.vowel-chart-text.middle {
 	transform: translate(-50%, -60%);
 }
 
-.vowel-chart-text-float {
+.vowel-chart-text {
 	position: absolute;
-	background: var(--background-primary);
+	background: var(--vowel-chart-background);
+	color: var(--vowel-chart-text);
 
 	padding: 0px 4px;
 	border-radius: 6px;
@@ -42,5 +46,5 @@
 	width: 6px;
 	height: 6px;
 	border-radius: 50%;
-	background-color: var(--text-normal);
+	background-color: var(--vowel-chart-text);
 }
