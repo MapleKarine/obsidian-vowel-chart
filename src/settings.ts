@@ -5,6 +5,7 @@ export interface VowelChartViewPluginSettings {
 	centralLowVowel: boolean;
 	layout: string;
 	size: number;
+	trueMid: boolean;
 	style: VowelChartViewPluginStyleSettings;
 }
 
@@ -14,10 +15,19 @@ export interface VowelChartViewPluginStyleSettings {
 	textColor?: string;
 }
 
+export interface Vowel {
+	x: number;
+	y: number;
+	label: string;
+	dot: string;
+	cardinal?: number;
+}
+
 export const DEFAULT_SETTINGS: VowelChartViewPluginSettings = {
 	centralLowVowel: true,
 	layout: 'trapezoid',
 	size: 40,
+	trueMid: true,
 	style: {
 		backgroundColor: 'white',
 		gridColor: 'black',
@@ -61,6 +71,16 @@ export class VowelChartViewPluginSettingTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.centralLowVowel)
 				.onChange(async (value) => {
 					this.plugin.settings.centralLowVowel = value;
+					await this.plugin.saveSettings();
+				}));
+
+		new Setting(containerEl)
+			.setName('True mid vowels')
+			.setDesc('Make [e ø o] true mid when there isn\'t [ɛ œ ɔ].')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.trueMid)
+				.onChange(async (value) => {
+					this.plugin.settings.trueMid = value;
 					await this.plugin.saveSettings();
 				}));
 

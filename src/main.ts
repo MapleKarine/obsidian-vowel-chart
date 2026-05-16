@@ -4,7 +4,7 @@ import {renderContainer} from 'render/main'
 import {parse} from 'parser/main';
 
 export default class VowelChartViewPlugin extends Plugin {
-	settings: VowelChartViewPluginSettings;
+	settings: VowelChartViewPluginSettings = DEFAULT_SETTINGS;
 
 	vowelChartProcessor(source: string, el: HTMLElement) {
 		const [container, renderVowels] = renderContainer(el);

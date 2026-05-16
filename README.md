@@ -69,7 +69,7 @@ add [ɔ̃]
 
 ### Dot
 
-`add` commands can be used together with the simple usage, and it can add a dot and position the text to the `right` or `left`:
+The commands `add right` and `add left` create a dot at the specified position and place the text to the right or left of it:
 
 ```vowel-chart
 add [a] "a aː"
@@ -79,6 +79,8 @@ add right (0, 0) "i"
 ```
 
 ![Image 9](_images/image9.png)
+
+`add` commands can be used together with the simple usage.
 
 ## Settings
 
@@ -125,18 +127,13 @@ i e ɛ a ɔ o u
 
 ![Image 10](_images/image10.png)
 
-## Styling
-
-Styling can be done by CSS snippets, changing colors can be made changing the variables in the `.vowel-chart-body` class. By default they inherit Obsidian variables:
-
+```vowel-chart
+config size 52
+i e ɛ a ɔ o u
 ```
-.vowel-chart-body {
-	--vowel-chart-background: var(--background-primary);
-	--vowel-chart-text: var(--text-normal);
-}
-```
+
+![Image 11](_images/image11.png)
 
 ## Manually installing the plugin
 
 - Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/vowel-chart/`.
-

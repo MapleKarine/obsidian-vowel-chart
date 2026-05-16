@@ -1,8 +1,4 @@
-import {DEFAULT_SETTINGS, VowelChartViewPluginSettings} from "../settings";
-
-interface Vowel {
-	label: string, x: number, y: number, dot: string
-}
+import {DEFAULT_SETTINGS, VowelChartViewPluginSettings, Vowel} from "../settings";
 
 function trapezoidChartCoord(x: number, y: number): [number, number] {
 	x = x * ((6-y)/3);
@@ -44,17 +40,15 @@ function drawSVG(svg: SVGSVGElement, settings: VowelChartViewPluginSettings) {
 	svg.setAttribute('class', 'vowel-chart-svg');
 
 	let line = (x1:number,y1:number,x2:number,y2:number) => {
-		const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
+		const l = svg.createSvg("line");
 		l.setAttribute('x1', String(x1));
 		l.setAttribute('y1', String(y1));
 		l.setAttribute('x2', String(x2));
 		l.setAttribute('y2', String(y2));
-		svg.appendChild(l);
 	};
 
-	const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+	const polygon = svg.createSvg("polygon");
 	polygon.setAttribute("fill", `transparent`);
-	svg.appendChild(polygon);
 
 	if (layout == 'square') {
 		polygon.setAttribute("points", `32,16 ${32+4*size},16 ${32+4*size},${16+3*size} ${32+0*size},${16+3*size}`);
@@ -83,15 +77,17 @@ function drawSVG(svg: SVGSVGElement, settings: VowelChartViewPluginSettings) {
 export function renderContainer(el: HTMLElement): [HTMLDivElement, (vowels: Vowel[], settings: VowelChartViewPluginSettings) => void] {
 	const container = el.createEl('div', {cls: 'vowel-chart-body'});
 
-
-	const svgEl = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-	container.appendChild(svgEl);
-
-	const textFloat = container.createEl('div',{cls:'vowel-chart-text-float-container'});
+	const svgEl = container.createSvg("svg");
+	const textFloat = container.createDiv({cls:'vowel-chart-text-float-container'});
 
 	const renderVowels = (vowels: Vowel[], settings: VowelChartViewPluginSettings) => {
 		settings.size = Number(settings.size) || DEFAULT_SETTINGS.size;
 		settings.layout = settings.layout.toLowerCase();
+
+		const trueMid = vowels.filter(v => v.x != 1&&v.y>0.5&&v.y<2.5);
+		if (settings.trueMid && trueMid.every(v=>v.y==1)) {
+			trueMid.forEach(v => v.y=1.5)
+		}
 
 		const positionFunc = layoutFunction[settings.layout] ?? trapezoidChartCoord;
 
@@ -99,17 +95,16 @@ export function renderContainer(el: HTMLElement): [HTMLDivElement, (vowels: Vowe
 			const [x, y] = positionFunc(vowel.x, vowel.y);
 
 			if (vowel.dot!='middle') {
-				const dotEl = textFloat.createEl('span', {cls: 'vowel-chart-text-dot'});
+				const dotEl = textFloat.createSpan({cls: 'vowel-chart-text-dot'});
 				dotEl.style.left = `${(x*settings.size+32)-3}px`;
 				dotEl.style.top = `${(y*settings.size+16)-3}px`;
 			}
-			const text = textFloat.createEl('span', {text: vowel.label, cls: 'vowel-chart-text '+vowel.dot});
+			const text = textFloat.createSpan({text: vowel.label, cls: 'vowel-chart-text '+vowel.dot});
 			text.style.left = `${(x*settings.size+32)+(vowel.dot=='left'?-4:vowel.dot=='right'?4:0)}px`;
 			text.style.top = `${(y*settings.size+16)}px`;
 		}
 
 		drawSVG(svgEl, settings);
-
 	};
 
 	return [container, renderVowels];
