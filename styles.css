@@ -36,7 +36,7 @@
 	padding: 0px 4px;
 	border-radius: 6px;
 	user-select: none;
-	text-wrap-mode: nowrap;
+	text-wrap-mode: pre;
 	line-height: 1em;
 }
 
